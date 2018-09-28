@@ -1,4 +1,4 @@
-#include "../selective_timeseries.hpp"
+#include "../selective_time_series.hpp"
 
 #include <iostream>
 #include <iomanip>
@@ -10,31 +10,34 @@ int main() {
     std::uniform_real_distribution<> rnd {0.0f, 1.0f};
     std::cout << std::setprecision(3) ;
 
-    selective_timeseries<float, 1000, false> s;
+    selective_time_series<std::array<double, 8>, 100'000, false> ts;
 
-    for (std::size_t i = 0; i < 30'000; ++i) {
+    for (std::size_t i = 0; i < 200'000; ++i) {
         const auto score = rnd(e);
-        s.add(rnd(e), i, score);
-        std::cout << "Added " << i
-                  << ", score " << score
-                  << ", worst " << s.worst().score
-                  << ", size " << s.size()
-                  << '\n';
+        ts.add({ rnd(e), rnd(e), rnd(e), rnd(e), rnd(e), rnd(e), rnd(e), rnd(e) }, i, score);
+        // std::cout << "Added " << i
+        //           << ", score " << score
+        //           << ", worst " << std::get<2>(ts.worst())
+        //           << ", size " << ts.size()
+        //           << '\n';
 
-        for (const auto& n : s) {
-            std::cout << n.timestamp << " ";
-        }
-        std::cout << '\n';
-        for (const auto& n : s) {
-            std::cout << n.score << " ";
-        }
-        std::cout << '\n';
+        // for (const auto& [v, t, s] : ts) {
+        //     std::cout << t << " ";
+        // }
+        // std::cout << '\n';
+        // for (const auto& [v, t, s] : ts) {
+        //     std::cout << s << " ";
+        // }
+        // std::cout << '\n';
 
 
     }
-    for (auto* n : s.best<11>()) {
-        if (n == nullptr) break; // Should only happen when N > .size()
-        std::cout << n->score << " ";
+
+    ts.insert({ rnd(e), rnd(e), rnd(e), rnd(e), rnd(e), rnd(e), rnd(e), rnd(e) }, 99, 0);
+
+    for (const auto& [v,t,s] : ts.best<11>()) {
+        // if (n == nullptr) break; // Should only happen when N > .size()
+        std::cout << s << " ";
     }
     std::cout << '\n';
 }
